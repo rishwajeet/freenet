@@ -1,0 +1,70 @@
+name: FreeNet
+options:
+  bundleIdPrefix: com.freenet
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    ENABLE_HARDENED_RUNTIME: YES
+    CODE_SIGN_IDENTITY: "-"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+packages:
+  GRDB:
+    url: https://github.com/groue/GRDB.swift
+    version: 7.0.0
+  Yams:
+    url: https://github.com/jpsim/Yams
+    version: 5.1.3
+
+targets:
+  FreeNet:
+    type: application
+    platform: macOS
+    sources:
+      - FreeNet
+    info:
+      path: FreeNet/Info.plist
+      properties:
+        CFBundleName: FreeNet
+        CFBundleDisplayName: FreeNet
+        CFBundleIdentifier: com.freenet.app
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "1.0.0"
+        CFBundlePackageType: APPL
+        CFBundleExecutable: FreeNet
+        LSUIElement: true
+        LSMinimumSystemVersion: "14.0"
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+    entitlements:
+      path: FreeNet/FreeNet.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+        com.apple.security.network.client: true
+        com.apple.security.network.server: true
+        com.apple.security.files.user-selected.read-write: true
+    settings:
+      base:
+        PRODUCT_NAME: FreeNet
+        PRODUCT_BUNDLE_IDENTIFIER: com.freenet.app
+        INFOPLIST_FILE: FreeNet/Info.plist
+        CODE_SIGN_ENTITLEMENTS: FreeNet/FreeNet.entitlements
+    dependencies:
+      - package: GRDB
+      - package: Yams
+    postBuildScripts:
+      - script: |
+          MIHOMO_SRC="${SRCROOT}/FreeNet/Resources/mihomo"
+          MIHOMO_DST="${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/Contents/Resources/mihomo"
+          if [ -f "$MIHOMO_SRC" ]; then
+            cp "$MIHOMO_SRC" "$MIHOMO_DST"
+            chmod +x "$MIHOMO_DST"
+          fi
+        name: "Copy Mihomo Binary"

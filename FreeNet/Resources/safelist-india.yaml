@@ -1,0 +1,80 @@
+# FreeNet Safelist — India
+# These domains always use RAW DIRECT (no encrypted DNS, no proxy)
+# Categories: banking, government, UPI/payments, fintech
+
+banking:
+  - hdfcbank.com
+  - icicibank.com
+  - sbi.co.in
+  - onlinesbi.sbi
+  - axisbank.com
+  - kotak.com
+  - bankofbaroda.in
+  - pnbindia.in
+  - yesbank.in
+  - idfcfirstbank.com
+  - federalbank.co.in
+  - indusind.com
+  - rbl.bank
+  - dbs.com
+  - hsbc.co.in
+  - sc.com
+  - citi.com
+  - bob.co.in
+
+government:
+  - gov.in
+  - nic.in
+  - india.gov.in
+  - incometax.gov.in
+  - gst.gov.in
+  - epfindia.gov.in
+  - uidai.gov.in
+  - digilocker.gov.in
+  - cowin.gov.in
+  - passportindia.gov.in
+  - irctc.co.in
+  - indianrail.gov.in
+  - nsdl.co.in
+
+payments:
+  - npci.org.in
+  - paytm.com
+  - phonepe.com
+  - gpay.app
+  - pay.google.com
+  - amazonpay.in
+  - freecharge.in
+  - mobikwik.com
+  - bharatpe.com
+  - razorpay.com
+  - cashfree.com
+  - instamojo.com
+  - billdesk.com
+  - ccavenue.com
+  - payu.in
+
+fintech:
+  - zerodha.com
+  - kite.zerodha.com
+  - groww.in
+  - upstox.com
+  - angelone.in
+  - dhan.co
+  - smallcase.com
+  - coin.zerodha.com
+  - policybazaar.com
+  - etmoney.com
+
+insurance:
+  - licindia.in
+  - hdfclife.com
+  - iciciprulife.com
+  - maxlifeinsurance.com
+  - starhealth.in
+
+telecom:
+  - jio.com
+  - airtel.in
+  - myvi.in
+  - bsnl.co.in
