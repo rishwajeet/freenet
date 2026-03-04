@@ -9,7 +9,7 @@ final class CrowdClient {
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
 
-    init(baseURL: URL = URL(string: "https://api.freenet.dev")!) {
+    init(baseURL: URL = URL(string: "https://freenet-api.rishwajeet.workers.dev")!) {
         self.baseURL = baseURL
 
         let config = URLSessionConfiguration.default
@@ -28,7 +28,7 @@ final class CrowdClient {
 
     /// Reports a block detection to the crowd intelligence API.
     func report(_ report: BlockReport) async throws {
-        let url = baseURL.appendingPathComponent("v1/reports")
+        let url = baseURL.appendingPathComponent("api/reports")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -46,7 +46,7 @@ final class CrowdClient {
 
     /// Fetches the crowd-sourced blocklist for a given country.
     func fetchBlocklist(country: String) async throws -> CrowdBlocklist {
-        let url = baseURL.appendingPathComponent("v1/blocklist/\(country)")
+        let url = baseURL.appendingPathComponent("api/blocklist/\(country)")
         var request = URLRequest(url: url)
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
