@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Intelligent internet freedom for macOS</strong><br>
-  No blocks. No ads. No friction.
+  Blocked sites load. Ads vanish. Banking stays untouched.
 </p>
 
 <p align="center">
@@ -18,7 +18,25 @@
 
 ---
 
-FreeNet is a macOS menu bar app that makes the internet work the way it should. It doesn't use static domain lists — it **learns** what's blocked, adapts in real-time, and gets smarter with every user.
+## Why FreeNet
+
+VPNs route **everything** through a foreign server. Your banking gets laggy, UPI times out, streaming geo-locks the wrong way, and your entire connection slows down. You're paying a speed tax on 100% of your traffic to unblock the 5% that's actually restricted.
+
+DNS-only solutions like NextDNS and AdGuard are great at killing ads, but they can't unblock anything. Blocked sites stay blocked. You still need a VPN for that, and now you're back to toggling.
+
+FreeNet's insight: **different domains need different routes**, and the system can figure this out automatically. Encrypted DNS handles 95% of traffic (with ad blocking). VPN kicks in only for the domains that are actually blocked. Banking and government sites are never intercepted. No manual switching, no speed penalty on traffic that doesn't need it.
+
+## What it does
+
+- Blocked sites load automatically -- no manual VPN toggle
+- System-wide ad blocking across all apps, not just browsers
+- Banking, UPI, government sites are never intercepted
+- 95% of traffic stays fast (encrypted DNS, no foreign server)
+- Learns what's blocked in your country and adapts in real-time
+- Crowd intelligence: new installs start smart from day one
+- WireGuard VPN: drop any `.conf` file (Proton, Mullvad, any provider)
+- Full CLI for terminal control (`freenet status`, `freenet traffic --live`)
+- Open source, MIT licensed
 
 ## How it works
 
@@ -52,16 +70,6 @@ Request comes in
 
 A brand new install routes everything through encrypted DNS. Within minutes, it learns what's blocked and what's DNS-hostile. With crowd intelligence, new users inherit what thousands already learned.
 
-## Features
-
-- **Intelligent routing** — Learns which sites are blocked, DNS-hostile, or safe. Adapts automatically.
-- **System-wide ad blocking** — DNS-level blocking works for all apps, not just browsers.
-- **Crowd intelligence** — Anonymous block reports aggregated across users. New installs start smart.
-- **WireGuard VPN** — Drop any WireGuard `.conf` file. Works with Proton, Mullvad, or any provider.
-- **Privacy-first** — No browsing history, no personal data. Just domain + country + failure type.
-- **Menu bar native** — Lives in your menu bar. Glanceable stats. Never needs to be opened to work.
-- **Live dashboard** — Real-time traffic view, learned domains, ad block counter.
-
 ## Install
 
 ### Download
@@ -82,41 +90,107 @@ Requirements: macOS 14+, Xcode 15+, [XcodeGen](https://github.com/yonaskolb/Xcod
 git clone https://github.com/rishwajeet/freenet.git
 cd freenet
 xcodegen generate
-open FreeNet.xcodeproj
-# Build and Run (Cmd+R)
+xcodebuild build -scheme FreeNet       # GUI app
+xcodebuild build -scheme freenet-cli   # CLI tool
 ```
+
+## CLI
+
+The `freenet` CLI gives you full terminal control. It shares the same database and engine as the GUI app.
+
+```bash
+# Copy to path after building
+sudo cp build/Build/Products/Release/freenet /usr/local/bin/
+```
+
+| Command | Description |
+|---------|-------------|
+| `freenet start` | Start the mihomo engine |
+| `freenet stop` | Stop the mihomo engine |
+| `freenet status` | Show engine status and domain counts |
+| `freenet status --json` | Output status as JSON |
+| `freenet toggle` | Toggle the engine on or off |
+| `freenet domains list` | List all learned domains |
+| `freenet domains list --filter blocked` | Filter by classification (safe, blocked, dns-hostile, unknown) |
+| `freenet domains lookup example.com` | Check the route decision for a domain |
+| `freenet domains learn example.com blocked` | Manually classify a domain |
+| `freenet traffic` | Show recent traffic events |
+| `freenet traffic --live` | Stream traffic continuously |
+| `freenet sync` | Sync crowd intelligence blocklist |
+| `freenet config show` | Print the active mihomo config |
+| `freenet config reload` | Regenerate and hot-reload config |
+| `freenet vpn load wireguard.conf` | Import a WireGuard config file |
+| `freenet vpn show` | Show the current VPN configuration |
 
 ## Setup
 
-1. Launch FreeNet — it appears in your menu bar
-2. Drop your WireGuard `.conf` file (from Proton, Mullvad, etc.)
-3. Done. FreeNet handles the rest.
+FreeNet has a 6-step guided onboarding that walks you through everything:
 
-The app learns as you browse. Blocked sites route through VPN automatically. Ads disappear. Banking sites stay untouched.
+1. **Welcome** -- what FreeNet is
+2. **The Problem** -- why VPNs and DNS-only tools aren't enough
+3. **How it Works** -- the three intelligent pathways (Encrypted / VPN / Direct)
+4. **VPN Config** -- drop your WireGuard `.conf` file (optional but recommended)
+5. **Permissions** -- one macOS authorization for the local network tunnel
+6. **All Set** -- dynamic status showing what's active
+
+After setup, FreeNet lives in your menu bar. It learns as you browse -- blocked sites route through VPN automatically, ads disappear, banking stays untouched.
+
+### Getting your WireGuard config
+
+FreeNet's setup wizard includes step-by-step tutorials for all major VPN providers. Here's a quick reference:
+
+| Provider | How to get your `.conf` file |
+|----------|------------------------------|
+| **Proton VPN** | Account dashboard → Downloads → WireGuard configuration → Select server → Create → Download |
+| **Mullvad** | Account page → WireGuard configuration → Generate key → Select server → Download file |
+| **Surfshark** | My account → VPN → Manual setup → Router/Other → WireGuard → Get Credentials → Download |
+| **NordVPN** | Get access token from nordvpn.com/servers/tools → Use NordVPN Linux CLI → `nordvpn export-wireguard` |
+| **Windscribe** | Account → WireGuard Config Generator → Pick server → Get Config → Download |
+| **IVPN** | Account → WireGuard → Configuration → Generate key → Select server → Download |
+
+Don't have a VPN yet? [Mullvad](https://mullvad.net) and [Proton VPN](https://protonvpn.com) both have free or easy WireGuard support.
+
+### Keyboard shortcuts
+
+Since FreeNet is a menu bar app (no Dock icon), standard shortcuts are handled internally:
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd+Q` | Quit FreeNet (stops engine first) |
+| `Cmd+,` | Open Settings |
 
 ## Architecture
 
 ```
 FreeNet/
-├── App/              # Entry point, global state
-├── Views/            # SwiftUI — menu bar, dashboard, settings, setup wizard
+├── App/              # Entry point, global state, keyboard shortcuts
+├── Views/            # SwiftUI — menu bar, dashboard, settings, setup wizard, about
+│   ├── MenuBarView     # Connection toggle, live duration, engine status, first-run tip
+│   ├── SetupWizard     # 6-step onboarding with VPN provider tutorials
+│   ├── DashboardView   # Live traffic + learned domains
+│   ├── SettingsView    # DNS, VPN, safelist, intelligence, general
+│   ├── AboutView       # App info, version, links
+│   └── LearnedDomainsView # Domain list with filters + sort
 ├── Engine/           # Mihomo process management, config generation, traffic monitor
 ├── Intelligence/     # Learning engine, failure detector, domain store, crowd client
 ├── Models/           # Domain state, traffic events, block reports
 ├── Helpers/          # WireGuard parser, DNS config, permissions
+├── CLI/              # Command-line interface (ArgumentParser)
 └── Resources/        # Mihomo binary, safe domain list, app icon
 
+site/                 # Landing page (GitHub Pages)
 freenet-api/          # Crowd intelligence API (Cloudflare Workers + D1)
 ```
 
 ### Tech stack
 
-- **Proxy engine**: [Mihomo](https://github.com/MetaCubeX/mihomo) (embedded) — routing, WireGuard, TUN, DNS interception
-- **Intelligence**: Custom Swift layer — failure detection, learning engine, SQLite domain store
+- **Proxy engine**: [Mihomo](https://github.com/MetaCubeX/mihomo) (embedded) -- routing, WireGuard, TUN, DNS interception
+- **Intelligence**: Custom Swift layer -- failure detection, learning engine, SQLite domain store
 - **Persistence**: [GRDB.swift](https://github.com/groue/GRDB.swift) (SQLite)
 - **Config**: [Yams](https://github.com/jpsim/Yams) (YAML generation for Mihomo)
 - **Crowd API**: [Hono](https://hono.dev) on Cloudflare Workers with D1
 - **UI**: SwiftUI (native macOS)
+- **CLI**: [ArgumentParser](https://github.com/apple/swift-argument-parser)
 
 ### Domain states
 
@@ -156,7 +230,7 @@ Users can opt out in Settings.
 - Crowd reports contain only: domain, country code, failure type
 - Reports are rate-limited and IP-hashed (hash is not reversible)
 - All data stays on-device except anonymous crowd reports
-- Fully open source — audit the code yourself
+- Fully open source -- audit the code yourself
 
 ## Contributing
 

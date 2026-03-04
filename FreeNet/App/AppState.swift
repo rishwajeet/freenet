@@ -19,6 +19,9 @@ final class AppState: ObservableObject {
     @Published var connectionState: ConnectionState = .disconnected
     @Published var isVPNConfigured: Bool = false
     @Published var showSetupWizard: Bool = false
+    @Published var connectedSince: Date? = nil
+    @Published var engineStatus: String = ""
+    @Published var hasCompletedOnboarding: Bool = false
 
     // Stats
     @Published var stats = TrafficStats()
@@ -46,11 +49,18 @@ final class AppState: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let maxRecentEvents = 200
     private var hasInitialized = false
+    static let sharedDefaults = UserDefaults(suiteName: "com.freenet.app") ?? .standard
 
     init() {
+        self.hasCompletedOnboarding = Self.sharedDefaults.bool(forKey: "hasCompletedOnboarding")
         Task { @MainActor in
             await self.initialize()
         }
+    }
+
+    func completeOnboarding() {
+        hasCompletedOnboarding = true
+        Self.sharedDefaults.set(true, forKey: "hasCompletedOnboarding")
     }
 
     // MARK: - Lifecycle
@@ -58,6 +68,7 @@ final class AppState: ObservableObject {
     func initialize() async {
         guard !hasInitialized else { return }
         hasInitialized = true
+        KeyboardShortcutMonitor.shared.install(appState: self)
         do {
             // 1. Initialize domain store (SQLite)
             let store = try DomainStore()
@@ -89,13 +100,13 @@ final class AppState: ObservableObject {
                 }
             }
 
-            // 6. Check VPN config and start or show wizard
-            self.isVPNConfigured = UserDefaults.standard.data(forKey: "wireguard_config") != nil
+            // 6. Check VPN config
+            self.isVPNConfigured = Self.sharedDefaults.data(forKey: "wireguard_config") != nil
 
-            if isVPNConfigured {
-                await startEngine()
-            } else {
+            if !hasCompletedOnboarding {
                 showSetupWizard = true
+            } else {
+                await startEngine()
             }
         } catch {
             print("[FreeNet] Failed to initialize: \(error)")
@@ -107,25 +118,31 @@ final class AppState: ObservableObject {
 
     func startEngine() async {
         connectionState = .connecting
+        connectedSince = nil
 
         do {
             // 1. Ensure mihomo binary is executable
+            engineStatus = "Checking engine binary..."
             try Permissions.ensureMihomoExecutable()
 
             // 2. Request TUN permission if needed
+            engineStatus = "Checking network permissions..."
             if !Permissions.hasTUNPermission() {
                 let granted = await Permissions.requestTUNPermission()
                 if !granted {
                     print("[FreeNet] TUN permission denied")
+                    engineStatus = "Failed: Network permission denied"
                     connectionState = .disconnected
                     return
                 }
             }
 
             // 3. Create and start Mihomo
+            engineStatus = "Starting proxy engine..."
             let manager = try MihomoManager()
             self.mihomoManager = manager
 
+            engineStatus = "Loading DNS and ad blocklist..."
             let builder = ConfigBuilder(
                 dnsProvider: dnsProvider,
                 customDNSURL: customDNSURL.isEmpty ? nil : customDNSURL,
@@ -134,9 +151,12 @@ final class AppState: ObservableObject {
             self.configBuilder = builder
 
             let config = try await builder.build()
+
+            engineStatus = "Starting encrypted DNS..."
             try manager.start(with: config)
 
             // 4. Start traffic monitor with learning loop
+            engineStatus = "Starting traffic monitor..."
             let monitor = TrafficMonitor(baseURL: manager.apiBaseURL)
             self.trafficMonitor = monitor
             monitor.onEvent = { [weak self] event in
@@ -146,9 +166,12 @@ final class AppState: ObservableObject {
             }
             monitor.startPolling()
 
+            engineStatus = "Ready"
+            connectedSince = Date()
             connectionState = .connected
         } catch {
             print("[FreeNet] Failed to start engine: \(error)")
+            engineStatus = "Failed: \(error.localizedDescription)"
             connectionState = .disconnected
         }
     }
@@ -156,6 +179,8 @@ final class AppState: ObservableObject {
     func stopEngine() {
         trafficMonitor?.stopPolling()
         mihomoManager?.stop()
+        connectedSince = nil
+        engineStatus = ""
         connectionState = .disconnected
     }
 
@@ -264,13 +289,13 @@ final class AppState: ObservableObject {
 
     func saveVPNConfig(_ config: WireGuardConfig) {
         if let data = try? JSONEncoder().encode(config) {
-            UserDefaults.standard.set(data, forKey: "wireguard_config")
+            Self.sharedDefaults.set(data, forKey: "wireguard_config")
             isVPNConfigured = true
         }
     }
 
     func loadVPNConfig() -> WireGuardConfig? {
-        guard let data = UserDefaults.standard.data(forKey: "wireguard_config") else { return nil }
+        guard let data = Self.sharedDefaults.data(forKey: "wireguard_config") else { return nil }
         return try? JSONDecoder().decode(WireGuardConfig.self, from: data)
     }
 

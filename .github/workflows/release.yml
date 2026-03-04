@@ -29,7 +29,7 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Build release
+      - name: Build GUI
         run: |
           xcodebuild build \
             -project FreeNet.xcodeproj \
@@ -40,10 +40,22 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
 
+      - name: Build CLI
+        run: |
+          xcodebuild build \
+            -project FreeNet.xcodeproj \
+            -scheme freenet-cli \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
       - name: Create DMG
         run: |
           mkdir -p dmg-staging
           cp -R build/Build/Products/Release/FreeNet.app dmg-staging/
+          cp build/Build/Products/Release/freenet dmg-staging/
           hdiutil create -volname FreeNet -srcfolder dmg-staging -ov -format UDZO FreeNet.dmg
 
       - name: Create GitHub Release

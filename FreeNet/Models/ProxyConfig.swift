@@ -70,4 +70,13 @@ enum RouteType: String, Codable {
     case vpn        // WireGuard tunnel
     case direct     // Raw, no proxy, no encrypted DNS
     case reject     // Blocked (ads/trackers)
+
+    var label: String {
+        switch self {
+        case .encrypted: return "ENC"
+        case .vpn:       return "VPN"
+        case .direct:    return "DIR"
+        case .reject:    return "BLK"
+        }
+    }
 }

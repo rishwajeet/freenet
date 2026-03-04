@@ -5,6 +5,7 @@ import ServiceManagement
 
 struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
+    @Environment(\.openWindow) private var openWindow
     @State private var newSafeDomain = ""
     @State private var safelist: [String] = []
     @State private var showVPNReconfigure = false
@@ -45,8 +46,11 @@ struct SettingsView: View {
                 } else {
                     Label("No VPN configured", systemImage: "exclamationmark.triangle")
                         .foregroundStyle(.orange)
+                    Text("Without a VPN, FreeNet can encrypt your DNS and block ads, but it can't unblock geo-restricted or censored sites. Add a WireGuard config to enable intelligent VPN routing.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     Button("Set Up VPN...") {
-                        appState.showSetupWizard = true
+                        openWindow(id: "setup")
                     }
                     .buttonStyle(.borderedProminent)
                 }

@@ -28,6 +28,17 @@ final class MihomoManager {
         try FileManager.default.createDirectory(at: configDirectory, withIntermediateDirectories: true)
     }
 
+    /// CLI-friendly initializer with explicit binary path (no Bundle.main dependency).
+    init(binaryURL: URL, apiPort: Int = 9090) throws {
+        self.apiPort = apiPort
+        self.apiBaseURL = URL(string: "http://127.0.0.1:\(apiPort)")!
+        self.binaryURL = binaryURL
+
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        self.configDirectory = appSupport.appendingPathComponent("FreeNet", isDirectory: true)
+        try FileManager.default.createDirectory(at: configDirectory, withIntermediateDirectories: true)
+    }
+
     // MARK: - Lifecycle
 
     func start(with config: String) throws {

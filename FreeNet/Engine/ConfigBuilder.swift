@@ -208,7 +208,8 @@ struct ConfigBuilder {
     // MARK: - Helpers
 
     private func loadWireGuardConfig() -> WireGuardConfig? {
-        guard let data = UserDefaults.standard.data(forKey: "wireguard_config") else { return nil }
+        let defaults = UserDefaults(suiteName: "com.freenet.app") ?? .standard
+        guard let data = defaults.data(forKey: "wireguard_config") else { return nil }
         return try? JSONDecoder().decode(WireGuardConfig.self, from: data)
     }
 

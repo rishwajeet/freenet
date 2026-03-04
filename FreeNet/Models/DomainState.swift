@@ -48,6 +48,45 @@ struct DomainRecord: Codable, FetchableRecord, PersistableRecord, Identifiable {
     }
 }
 
+// MARK: - Display Labels (shared between GUI and CLI)
+
+extension DomainClassification {
+    var displayLabel: String {
+        switch self {
+        case .safe:       return "Safe"
+        case .blocked:    return "Blocked"
+        case .dnsHostile: return "DNS Hostile"
+        case .unknown:    return "Unknown"
+        }
+    }
+}
+
+extension FailureType {
+    var shortLabel: String {
+        switch self {
+        case .connectionReset:    return "RST"
+        case .dnsFailure:         return "DNS"
+        case .tlsFailure:         return "TLS"
+        case .httpForbidden:      return "403"
+        case .contentRestriction: return "GEO"
+        case .timeout:            return "TMO"
+        case .emptyResponse:      return "EMPTY"
+        case .dnsHostile:         return "DNSH"
+        }
+    }
+}
+
+extension DomainSource {
+    var shortLabel: String {
+        switch self {
+        case .preSeeded:   return "Seed"
+        case .autoLearned: return "Auto"
+        case .crowd:       return "Crowd"
+        case .userManual:  return "Manual"
+        }
+    }
+}
+
 // MARK: - Table Creation
 
 extension DomainRecord {

@@ -77,7 +77,7 @@ struct DashboardView: View {
                 ContentUnavailableView(
                     "No Traffic",
                     systemImage: "network.slash",
-                    description: Text("Traffic events will appear here as they occur.")
+                    description: Text("Start browsing to see traffic appear here. FreeNet monitors all network requests across your system.")
                 )
             } else {
                 ForEach(filteredEvents) { event in

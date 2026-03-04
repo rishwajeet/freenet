@@ -5,6 +5,7 @@ import SwiftUI
 struct MenuBarView: View {
     @EnvironmentObject private var appState: AppState
     @Environment(\.openWindow) private var openWindow
+    @AppStorage("hasSeenFirstRunTip") private var hasSeenFirstRunTip = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -13,6 +14,20 @@ struct MenuBarView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 14)
                 .padding(.bottom, 12)
+
+            // First-run tip
+            if !hasSeenFirstRunTip && appState.connectionState == .connected {
+                firstRunTip
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+            }
+
+            // VPN-not-configured banner
+            if appState.connectionState == .connected && !appState.isVPNConfigured {
+                vpnBanner
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+            }
 
             Divider()
 
@@ -47,6 +62,20 @@ struct MenuBarView: View {
                 Text(connectionLabel)
                     .font(.caption)
                     .foregroundStyle(connectionColor)
+
+                // Connection duration
+                if let since = appState.connectedSince, appState.connectionState == .connected {
+                    Text(timerInterval: since...Date.distantFuture, countsDown: false)
+                        .font(.system(.caption2, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                }
+
+                // Engine startup progress
+                if appState.connectionState == .connecting && !appState.engineStatus.isEmpty {
+                    Text(appState.engineStatus)
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                }
             }
 
             Spacer()
@@ -85,6 +114,50 @@ struct MenuBarView: View {
                 Task { await appState.toggleConnection() }
             }
         )
+    }
+
+    // MARK: - First Run Tip
+
+    private var firstRunTip: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "lightbulb.fill")
+                .foregroundStyle(.yellow)
+                .font(.caption)
+            Text("FreeNet is active. Try visiting a blocked site — it'll learn and route it through VPN automatically.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            Spacer(minLength: 0)
+            Button("Got it") {
+                withAnimation { hasSeenFirstRunTip = true }
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.mini)
+        }
+        .padding(8)
+        .background(Color.yellow.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    // MARK: - VPN Banner
+
+    private var vpnBanner: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(.orange)
+                .font(.caption2)
+            Text("VPN not set up — blocked sites won't be unblocked")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            Spacer(minLength: 0)
+            Button("Set up") {
+                openWindow(id: "setup")
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.mini)
+        }
+        .padding(8)
+        .background(Color.orange.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
     // MARK: - Stats Section
@@ -136,24 +209,63 @@ struct MenuBarView: View {
     // MARK: - Footer Buttons
 
     private var footerButtons: some View {
-        HStack {
-            Button {
-                openWindow(id: "dashboard")
-            } label: {
-                Label("Dashboard", systemImage: "chart.bar.fill")
-                    .font(.caption)
-            }
-            .buttonStyle(.plain)
+        VStack(spacing: 0) {
+            HStack {
+                Button {
+                    openWindow(id: "dashboard")
+                } label: {
+                    Label("Dashboard", systemImage: "chart.bar.fill")
+                        .font(.caption)
+                }
+                .buttonStyle(.plain)
 
-            Spacer()
+                Spacer()
 
-            Button {
-                openWindow(id: "settings")
-            } label: {
-                Label("Settings", systemImage: "gear")
-                    .font(.caption)
+                Button {
+                    openWindow(id: "settings")
+                } label: {
+                    Label("Settings", systemImage: "gear")
+                        .font(.caption)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
+
+            Divider()
+                .padding(.vertical, 6)
+
+            HStack {
+                Button {
+                    openWindow(id: "about")
+                } label: {
+                    Text("About FreeNet")
+                        .font(.caption)
+                }
+                .buttonStyle(.plain)
+
+                Spacer()
+
+                Button {
+                    if let url = URL(string: "https://github.com/rishwajeet/freenet/releases") {
+                        NSWorkspace.shared.open(url)
+                    }
+                } label: {
+                    Text("Check for Updates")
+                        .font(.caption)
+                }
+                .buttonStyle(.plain)
+
+                Spacer()
+
+                Button {
+                    appState.stopEngine()
+                    NSApp.terminate(nil)
+                } label: {
+                    Text("Quit FreeNet")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
 }
@@ -229,7 +341,7 @@ struct RouteBadge: View {
     }
 }
 
-// MARK: - RouteType Helpers
+// MARK: - RouteType SwiftUI Helpers
 
 extension RouteType {
     var color: Color {
@@ -238,15 +350,6 @@ extension RouteType {
         case .vpn:       return .purple
         case .direct:    return .gray
         case .reject:    return .red
-        }
-    }
-
-    var label: String {
-        switch self {
-        case .encrypted: return "ENC"
-        case .vpn:       return "VPN"
-        case .direct:    return "DIR"
-        case .reject:    return "BLK"
         }
     }
 }

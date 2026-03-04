@@ -124,7 +124,7 @@ struct LearnedDomainsView: View {
                 ContentUnavailableView(
                     "No Domains",
                     systemImage: "globe",
-                    description: Text("Learned domains will appear here as FreeNet discovers them.")
+                    description: Text("FreeNet is learning. Browse normally and it will figure out which sites are blocked, which need direct connections, and which work fine through encrypted DNS.")
                 )
             } else {
                 ForEach(filteredDomains) { domain in
@@ -278,50 +278,15 @@ private struct ClassificationBadge: View {
     }
 }
 
-// MARK: - Display Helpers
+// MARK: - SwiftUI Display Helpers
 
 extension DomainClassification {
-    var displayLabel: String {
-        switch self {
-        case .safe:       return "Safe"
-        case .blocked:    return "Blocked"
-        case .dnsHostile: return "DNS Hostile"
-        case .unknown:    return "Unknown"
-        }
-    }
-
     var color: Color {
         switch self {
         case .safe:       return .green
         case .blocked:    return .purple
         case .dnsHostile: return .orange
         case .unknown:    return .gray
-        }
-    }
-}
-
-extension FailureType {
-    var shortLabel: String {
-        switch self {
-        case .connectionReset:    return "RST"
-        case .dnsFailure:         return "DNS"
-        case .tlsFailure:         return "TLS"
-        case .httpForbidden:      return "403"
-        case .contentRestriction: return "GEO"
-        case .timeout:            return "TMO"
-        case .emptyResponse:      return "EMPTY"
-        case .dnsHostile:         return "DNSH"
-        }
-    }
-}
-
-extension DomainSource {
-    var shortLabel: String {
-        switch self {
-        case .preSeeded:   return "Seed"
-        case .autoLearned: return "Auto"
-        case .crowd:       return "Crowd"
-        case .userManual:  return "Manual"
         }
     }
 }

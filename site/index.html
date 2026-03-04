@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FreeNet -- Intelligent internet freedom for macOS</title>
-  <meta name="description" content="FreeNet is an open-source macOS app for intelligent internet freedom. No blocks, no ads, no friction.">
+  <meta name="description" content="Blocked sites just load. Ads vanish across every app. Banking stays untouched. All automatic. Open-source macOS app.">
   <meta name="theme-color" content="#0a0a0f">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23007AFF'/><path d='M10 16h12M16 10v12' stroke='white' stroke-width='2.5' stroke-linecap='round'/></svg>">
   <style>
@@ -27,6 +27,7 @@
       --green: #30d158;
       --orange: #ff9f0a;
       --purple: #bf5af2;
+      --red: #ff453a;
       --radius: 16px;
       --radius-sm: 10px;
       --radius-xs: 6px;
@@ -70,6 +71,7 @@
     .reveal-delay-3 { transition-delay: 0.3s; }
     .reveal-delay-4 { transition-delay: 0.4s; }
     .reveal-delay-5 { transition-delay: 0.5s; }
+    .reveal-delay-6 { transition-delay: 0.6s; }
 
     /* ===== Navigation ===== */
     nav {
@@ -314,6 +316,99 @@
 
     .section-header .section-desc {
       margin: 0 auto;
+    }
+
+    /* ===== Problem Section ===== */
+    .problem {
+      background: var(--bg-subtle);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .problem-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .problem-card:hover {
+      border-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .problem-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      background: rgba(255, 69, 58, 0.12);
+    }
+
+    .problem-icon svg { width: 24px; height: 24px; }
+
+    .problem-card h3 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .problem-card p {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    /* ===== Experience Section ===== */
+    .experience {
+      text-align: center;
+    }
+
+    .experience-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .experience-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .experience-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    .experience-item p {
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .experience-item strong {
+      color: var(--text);
     }
 
     /* ===== How It Works (Pathways) ===== */
@@ -660,6 +755,68 @@
       height: 18px;
     }
 
+    /* ===== CLI Quick Start ===== */
+    .cli-quickstart {
+      margin-top: 64px;
+      text-align: center;
+    }
+
+    .cli-quickstart h3 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .cli-quickstart > p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .cli-code-block {
+      max-width: 520px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 24px 28px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 14px;
+      line-height: 2;
+      text-align: left;
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color 0.2s;
+      position: relative;
+    }
+
+    .cli-code-block:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .cli-code-block .copy-hint {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .cli-code-block:hover .copy-hint {
+      opacity: 1;
+    }
+
+    .cli-code-block.copied .copy-hint {
+      color: var(--green);
+    }
+
+    .cli-prompt { color: var(--text-tertiary); user-select: none; }
+    .cli-cmd { color: var(--accent); }
+
     /* ===== Footer ===== */
     footer {
       padding: 60px 0;
@@ -725,6 +882,7 @@
 
     /* ===== Responsive ===== */
     @media (max-width: 900px) {
+      .problem-grid,
       .pathways-grid,
       .features-grid,
       .install-grid {
@@ -757,6 +915,120 @@
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
+    /* ===== VPN Setup Guide ===== */
+    .vpn-guide { background: var(--bg-subtle); }
+
+    .vpn-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+
+    .vpn-tab {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .vpn-tab:hover { background: var(--surface-hover); color: var(--text); }
+
+    .vpn-tab.active {
+      background: var(--accent-subtle);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .vpn-panels { max-width: 640px; margin: 0 auto; }
+
+    .vpn-panel {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+    }
+
+    .vpn-panel.active { display: block; }
+
+    .vpn-panel h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .vpn-panel ol {
+      list-style: none;
+      counter-reset: vpn-step;
+      padding: 0;
+    }
+
+    .vpn-panel ol li {
+      counter-increment: vpn-step;
+      position: relative;
+      padding-left: 36px;
+      padding-bottom: 14px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .vpn-panel ol li:last-child { padding-bottom: 0; }
+
+    .vpn-panel ol li::before {
+      content: counter(vpn-step);
+      position: absolute;
+      left: 0;
+      top: 1px;
+      width: 22px;
+      height: 22px;
+      background: var(--accent);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .vpn-panel .vpn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .vpn-panel .vpn-link:hover { opacity: 0.8; }
+
+    .vpn-note {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--text-tertiary);
+    }
+
+    .vpn-note a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .vpn-note a:hover { text-decoration: underline; }
+
     /* ===== Selection ===== */
     ::selection { background: rgba(0, 122, 255, 0.3); color: white; }
   </style>
@@ -776,9 +1048,10 @@
         FreeNet
       </a>
       <ul class="nav-links">
+        <li><a href="#problem">Why FreeNet</a></li>
         <li><a href="#how-it-works">How it works</a></li>
         <li><a href="#features">Features</a></li>
-        <li><a href="#learning-loop">Intelligence</a></li>
+        <li><a href="#vpn-setup">VPN Setup</a></li>
         <li><a href="#install">Install</a></li>
         <li><a href="https://github.com/rishwajeet/freenet" target="_blank" rel="noopener">GitHub</a></li>
         <li><a href="https://github.com/rishwajeet/freenet/releases/latest" class="nav-cta" target="_blank" rel="noopener">Download</a></li>
@@ -799,7 +1072,7 @@
       <h1 class="reveal reveal-delay-1">FreeNet</h1>
       <p class="hero-tagline reveal reveal-delay-2">Your internet, the way it should be</p>
       <p class="hero-subtitle reveal reveal-delay-3">
-        No blocks. No ads. No friction. Intelligent routing that learns what works and what doesn't.
+        Blocked sites just load. Ads vanish across every app. Banking stays untouched. All automatic.
       </p>
       <div class="hero-ctas reveal reveal-delay-4">
         <a href="https://github.com/rishwajeet/freenet/releases/latest" class="btn btn-primary" target="_blank" rel="noopener">
@@ -815,6 +1088,89 @@
           </svg>
           View on GitHub
         </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Problem -->
+  <section class="problem" id="problem">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-label">The problem</p>
+        <h2 class="section-title">Your internet is more broken than you think</h2>
+        <p class="section-desc">
+          Every existing solution only solves half the puzzle. Here's what you're actually dealing with.
+        </p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card reveal reveal-delay-1">
+          <div class="problem-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h3>VPNs slow everything down</h3>
+          <p>Routes ALL your traffic through a foreign server. Banking gets laggy, UPI times out, streaming geo-locks the wrong way, speed tanks across the board.</p>
+        </div>
+        <div class="problem-card reveal reveal-delay-2">
+          <div class="problem-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+            </svg>
+          </div>
+          <h3>DNS can only block, not unblock</h3>
+          <p>Great at killing ads. Can't bypass geo-restrictions. Blocked sites stay blocked. NextDNS and AdGuard solve half the problem.</p>
+        </div>
+        <div class="problem-card reveal reveal-delay-3">
+          <div class="problem-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ff453a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"/>
+              <polyline points="1 20 1 14 7 14"/>
+              <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+            </svg>
+          </div>
+          <h3>Manual switching is a daily chore</h3>
+          <p>VPN on for one site, off for banking, on again for another. Five times before lunch. Every single day.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Experience -->
+  <section class="experience" id="experience">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-label">The experience</p>
+        <h2 class="section-title">What if it all just worked?</h2>
+      </div>
+      <div class="experience-list">
+        <div class="experience-item reveal reveal-delay-1">
+          <div class="experience-dot"></div>
+          <p><strong>Blocked sites load.</strong> Automatically. No toggle.</p>
+        </div>
+        <div class="experience-item reveal reveal-delay-2">
+          <div class="experience-dot"></div>
+          <p><strong>Ads disappear across every app</strong> -- not just your browser.</p>
+        </div>
+        <div class="experience-item reveal reveal-delay-3">
+          <div class="experience-dot"></div>
+          <p><strong>Banking, UPI, and government sites</strong> are never intercepted.</p>
+        </div>
+        <div class="experience-item reveal reveal-delay-4">
+          <div class="experience-dot"></div>
+          <p><strong>95% of your traffic</strong> has zero speed penalty.</p>
+        </div>
+        <div class="experience-item reveal reveal-delay-5">
+          <div class="experience-dot"></div>
+          <p><strong>New installs inherit</strong> what thousands of users already learned.</p>
+        </div>
+        <div class="experience-item reveal reveal-delay-6">
+          <div class="experience-dot"></div>
+          <p><strong>Set it up once.</strong> Never think about it again.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -945,6 +1301,16 @@
           <h3>Open Source</h3>
           <p>MIT licensed. Audit the code, contribute, fork -- your freedom, your choice.</p>
         </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon">
+            <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="4 17 10 11 4 5"/>
+              <line x1="12" y1="19" x2="20" y2="19"/>
+            </svg>
+          </div>
+          <h3>Command Line</h3>
+          <p>Full terminal control. Start, stop, inspect live traffic, manage domains, sync intelligence -- all from <code style="color: var(--accent);">freenet</code>.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -1040,13 +1406,139 @@
         <div class="install-card reveal reveal-delay-3">
           <div class="install-number">Option 3</div>
           <h3>Build from source</h3>
-          <p>Clone, generate, build. Requires macOS 14+, Xcode 15+.</p>
-          <div class="install-code" onclick="copyCode(this, 'git clone https://github.com/rishwajeet/freenet.git\ncd freenet && xcodegen generate\nopen FreeNet.xcodeproj')">
-            <code>git clone https://github.com/rishwajeet/freenet.git<br>cd freenet && xcodegen generate<br>open FreeNet.xcodeproj</code>
+          <p>Clone, generate, build. GUI app and CLI tool. Requires macOS 14+, Xcode 15+.</p>
+          <div class="install-code" onclick="copyCode(this, 'git clone https://github.com/rishwajeet/freenet.git\ncd freenet && xcodegen generate\nxcodebuild build -scheme FreeNet\nxcodebuild build -scheme freenet-cli')">
+            <code>git clone https://github.com/rishwajeet/freenet.git<br>cd freenet && xcodegen generate<br>xcodebuild build -scheme FreeNet<br>xcodebuild build -scheme freenet-cli</code>
             <span class="copy-hint">Click to copy</span>
           </div>
         </div>
       </div>
+
+      <!-- CLI Quick Start -->
+      <div class="cli-quickstart reveal">
+        <h3>CLI Quick Start</h3>
+        <p>Copy the CLI binary to your path after building, then use it from any terminal.</p>
+        <div class="cli-code-block" onclick="copyCode(this, 'sudo cp build/Build/Products/Release/freenet /usr/local/bin/\nfreenet status\nfreenet domains list\nfreenet traffic --live')">
+          <span class="cli-prompt">$ </span><span class="cli-cmd">sudo cp</span> build/Build/Products/Release/freenet /usr/local/bin/<br>
+          <span class="cli-prompt">$ </span><span class="cli-cmd">freenet</span> status<br>
+          <span class="cli-prompt">$ </span><span class="cli-cmd">freenet</span> domains list<br>
+          <span class="cli-prompt">$ </span><span class="cli-cmd">freenet</span> traffic --live
+          <span class="copy-hint">Click to copy</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VPN Setup Guide -->
+  <section class="vpn-guide" id="vpn-setup">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-label">VPN setup</p>
+        <h2 class="section-title">Get your WireGuard config</h2>
+        <p class="section-desc">
+          FreeNet works with any WireGuard provider. Pick yours and follow the steps to download your <code style="color: var(--accent);">.conf</code> file.
+        </p>
+      </div>
+
+      <div class="vpn-tabs reveal reveal-delay-1">
+        <button class="vpn-tab active" onclick="showVPN('proton')">Proton VPN</button>
+        <button class="vpn-tab" onclick="showVPN('mullvad')">Mullvad</button>
+        <button class="vpn-tab" onclick="showVPN('surfshark')">Surfshark</button>
+        <button class="vpn-tab" onclick="showVPN('nordvpn')">NordVPN</button>
+        <button class="vpn-tab" onclick="showVPN('windscribe')">Windscribe</button>
+        <button class="vpn-tab" onclick="showVPN('ivpn')">IVPN</button>
+      </div>
+
+      <div class="vpn-panels reveal reveal-delay-2">
+        <div class="vpn-panel active" id="vpn-proton">
+          <h3>Proton VPN</h3>
+          <ol>
+            <li>Open <strong>protonvpn.com</strong> and sign in to your account</li>
+            <li>Go to <strong>Downloads &rarr; WireGuard configuration</strong></li>
+            <li>Select a server location (any country you want to appear from)</li>
+            <li>Click <strong>"Create"</strong> to generate the config</li>
+            <li>Download the <code>.conf</code> file and drop it into FreeNet</li>
+          </ol>
+          <a class="vpn-link" href="https://protonvpn.com/support/wireguard-configurations/" target="_blank" rel="noopener">
+            Proton VPN guide &rarr;
+          </a>
+        </div>
+
+        <div class="vpn-panel" id="vpn-mullvad">
+          <h3>Mullvad</h3>
+          <ol>
+            <li>Open <strong>mullvad.net/account</strong> and sign in</li>
+            <li>Go to <strong>WireGuard configuration</strong></li>
+            <li>Click <strong>"Generate key"</strong> if you haven't already</li>
+            <li>Select a server location and click <strong>"Download file"</strong></li>
+            <li>Drop the downloaded <code>.conf</code> file into FreeNet</li>
+          </ol>
+          <a class="vpn-link" href="https://mullvad.net/en/help/wireguard-and-mullvad-vpn/" target="_blank" rel="noopener">
+            Mullvad guide &rarr;
+          </a>
+        </div>
+
+        <div class="vpn-panel" id="vpn-surfshark">
+          <h3>Surfshark</h3>
+          <ol>
+            <li>Open <strong>my.surfshark.com</strong> and sign in</li>
+            <li>Go to <strong>VPN &rarr; Manual setup &rarr; Router/Other</strong></li>
+            <li>Select <strong>WireGuard</strong> and choose a server location</li>
+            <li>Click <strong>"Get Credentials"</strong> and then <strong>"Download .conf"</strong></li>
+            <li>Drop the <code>.conf</code> file into FreeNet</li>
+          </ol>
+          <a class="vpn-link" href="https://support.surfshark.com/hc/en-us/articles/6585805139474" target="_blank" rel="noopener">
+            Surfshark guide &rarr;
+          </a>
+        </div>
+
+        <div class="vpn-panel" id="vpn-nordvpn">
+          <h3>NordVPN</h3>
+          <ol>
+            <li>Go to <strong>nordvpn.com/servers/tools</strong> to get your service credentials</li>
+            <li>Copy your NordVPN access token</li>
+            <li>Go to <strong>nordvpn.com/servers</strong> and pick a server</li>
+            <li>Use the NordVPN Linux CLI: <code>nordvpn set technology nordlynx</code></li>
+            <li>Export config with <code>nordvpn export-wireguard</code>, then drop the file into FreeNet</li>
+          </ol>
+          <a class="vpn-link" href="https://support.nordvpn.com/hc/en-us/articles/20164827795345" target="_blank" rel="noopener">
+            NordVPN guide &rarr;
+          </a>
+        </div>
+
+        <div class="vpn-panel" id="vpn-windscribe">
+          <h3>Windscribe</h3>
+          <ol>
+            <li>Open <strong>windscribe.com</strong> and sign in to your account</li>
+            <li>Go to <strong>Account &rarr; WireGuard Config Generator</strong></li>
+            <li>Pick a server location from the dropdown</li>
+            <li>Click <strong>"Get Config"</strong> to generate and download the <code>.conf</code> file</li>
+            <li>Drop the <code>.conf</code> file into FreeNet</li>
+          </ol>
+          <a class="vpn-link" href="https://windscribe.com/guides/wireguard" target="_blank" rel="noopener">
+            Windscribe guide &rarr;
+          </a>
+        </div>
+
+        <div class="vpn-panel" id="vpn-ivpn">
+          <h3>IVPN</h3>
+          <ol>
+            <li>Open <strong>ivpn.net/account</strong> and sign in</li>
+            <li>Go to <strong>WireGuard &rarr; Configuration</strong></li>
+            <li>Generate a new key pair (or use existing)</li>
+            <li>Select a server and download the <code>.conf</code> file</li>
+            <li>Drop the <code>.conf</code> file into FreeNet</li>
+          </ol>
+          <a class="vpn-link" href="https://www.ivpn.net/knowledgebase/general/wireguard-config-file-generation/" target="_blank" rel="noopener">
+            IVPN guide &rarr;
+          </a>
+        </div>
+      </div>
+
+      <p class="vpn-note reveal reveal-delay-3">
+        Don't have a VPN yet? <a href="https://mullvad.net" target="_blank" rel="noopener">Mullvad</a> and <a href="https://protonvpn.com" target="_blank" rel="noopener">Proton VPN</a> both have easy WireGuard support.<br>
+        VPN is optional &mdash; FreeNet's encrypted DNS and ad blocking work without it.
+      </p>
     </div>
   </section>
 
@@ -1122,6 +1614,14 @@
           if (hint) hint.textContent = 'Click to copy';
         }, 2000);
       });
+    }
+
+    // ===== VPN tab switching =====
+    function showVPN(provider) {
+      document.querySelectorAll('.vpn-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.vpn-panel').forEach(p => p.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.getElementById('vpn-' + provider).classList.add('active');
     }
 
     // ===== Smooth scroll for anchor links =====
