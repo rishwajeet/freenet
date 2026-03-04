@@ -45,10 +45,19 @@ final class AppState: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
     private let maxRecentEvents = 200
+    private var hasInitialized = false
+
+    init() {
+        Task { @MainActor in
+            await self.initialize()
+        }
+    }
 
     // MARK: - Lifecycle
 
     func initialize() async {
+        guard !hasInitialized else { return }
+        hasInitialized = true
         do {
             // 1. Initialize domain store (SQLite)
             let store = try DomainStore()

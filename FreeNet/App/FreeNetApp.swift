@@ -8,7 +8,6 @@ struct FreeNetApp: App {
         MenuBarExtra {
             MenuBarView()
                 .environmentObject(appState)
-                .task { await appState.initialize() }
         } label: {
             MenuBarIcon(state: appState.connectionState)
         }
