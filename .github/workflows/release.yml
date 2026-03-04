@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Resolve Swift packages
+        run: xcodebuild -resolvePackageDependencies -project FreeNet.xcodeproj -scheme FreeNet
+
+      - name: Build release
+        run: |
+          xcodebuild build \
+            -project FreeNet.xcodeproj \
+            -scheme FreeNet \
+            -configuration Release \
+            -derivedDataPath build
+
+      - name: Create DMG
+        run: |
+          mkdir -p dmg-staging
+          cp -R build/Build/Products/Release/FreeNet.app dmg-staging/
+          hdiutil create -volname FreeNet -srcfolder dmg-staging -ov -format UDZO FreeNet.dmg
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          gh release create "$TAG" FreeNet.dmg \
+            --title "FreeNet $TAG" \
+            --generate-notes
