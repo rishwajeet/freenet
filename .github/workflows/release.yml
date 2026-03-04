@@ -18,11 +18,16 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
+      - name: Download Mihomo binary
+        run: |
+          MIHOMO_VERSION="v1.19.10"
+          curl -L -o mihomo.gz "https://github.com/MetaCubeX/mihomo/releases/download/${MIHOMO_VERSION}/mihomo-darwin-arm64-${MIHOMO_VERSION}.gz"
+          gunzip mihomo.gz
+          chmod +x mihomo
+          mv mihomo FreeNet/Resources/mihomo
+
       - name: Generate Xcode project
         run: xcodegen generate
-
-      - name: Resolve Swift packages
-        run: xcodebuild -resolvePackageDependencies -project FreeNet.xcodeproj -scheme FreeNet
 
       - name: Build release
         run: |
@@ -30,7 +35,10 @@ jobs:
             -project FreeNet.xcodeproj \
             -scheme FreeNet \
             -configuration Release \
-            -derivedDataPath build
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
 
       - name: Create DMG
         run: |
