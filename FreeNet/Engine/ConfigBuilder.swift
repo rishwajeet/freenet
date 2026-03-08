@@ -1,6 +1,17 @@
 import Foundation
 import Yams
 
+enum ConfigBuilderError: LocalizedError {
+    case noAppSupportDirectory
+
+    var errorDescription: String? {
+        switch self {
+        case .noAppSupportDirectory:
+            return "Could not locate Application Support directory"
+        }
+    }
+}
+
 // MARK: - Config Builder
 
 /// Generates a complete Mihomo YAML configuration from the current DNS provider,
@@ -23,7 +34,9 @@ struct ConfigBuilder {
         let yaml = try await build()
 
         // Write updated config
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        guard let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            throw ConfigBuilderError.noAppSupportDirectory
+        }
         let configFile = appSupport
             .appendingPathComponent("FreeNet", isDirectory: true)
             .appendingPathComponent("config.yaml")

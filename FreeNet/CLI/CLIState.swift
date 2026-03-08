@@ -12,7 +12,9 @@ final class CLIState {
     let configBuilder: ConfigBuilder
 
     private static let appSupportDir: URL = {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        guard let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            fatalError("Application Support directory unavailable")
+        }
         return appSupport.appendingPathComponent("FreeNet", isDirectory: true)
     }()
 

@@ -121,7 +121,7 @@ enum Permissions {
         let appSupport = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
-        ).first!.path
+        ).first?.path ?? NSHomeDirectory()
         return "\(appSupport)/FreeNet"
     }
 

@@ -2,6 +2,17 @@ import Foundation
 import GRDB
 import Yams
 
+enum DomainStoreError: LocalizedError {
+    case noAppSupportDirectory
+
+    var errorDescription: String? {
+        switch self {
+        case .noAppSupportDirectory:
+            return "Could not locate Application Support directory"
+        }
+    }
+}
+
 // MARK: - Domain Store
 
 /// SQLite-backed persistence for domain classification data.
@@ -10,7 +21,9 @@ final class DomainStore {
     private let dbQueue: DatabaseQueue
 
     init() throws {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        guard let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            throw DomainStoreError.noAppSupportDirectory
+        }
         let dbDir = appSupport.appendingPathComponent("FreeNet", isDirectory: true)
         try FileManager.default.createDirectory(at: dbDir, withIntermediateDirectories: true)
 
