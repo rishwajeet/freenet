@@ -1,11 +1,11 @@
 cask "freenet" do
-  version "1.0.0"
-  sha256 "212260965b546a197fe0f942a04d52d8287bacd17a550060777f012d8194e2bb"
+  version "1.1.0"
+  sha256 :no_check # Updated after release build completes
 
   url "https://github.com/rishwajeet/freenet/releases/download/v#{version}/FreeNet.dmg"
   name "FreeNet"
   desc "Intelligent internet freedom — no blocks, no ads, no friction"
-  homepage "https://github.com/rishwajeet/freenet"
+  homepage "https://rishwajeet.github.io/freenet/"
 
   depends_on macos: ">= :sonoma"
 
