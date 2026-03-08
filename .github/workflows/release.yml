@@ -65,4 +65,4 @@ jobs:
           TAG="${GITHUB_REF_NAME}"
           gh release create "$TAG" FreeNet.dmg \
             --title "FreeNet $TAG" \
-            --generate-notes
+            --notes-file CHANGELOG.md
