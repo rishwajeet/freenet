@@ -1,6 +1,6 @@
 cask "freenet" do
   version "1.1.0"
-  sha256 :no_check # Updated after release build completes
+  sha256 "d9139b48378656f2c8195327300f220375835393f5c8921330297d97787e8b64"
 
   url "https://github.com/rishwajeet/freenet/releases/download/v#{version}/FreeNet.dmg"
   name "FreeNet"
